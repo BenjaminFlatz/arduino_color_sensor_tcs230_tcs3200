@@ -14,16 +14,50 @@ int redFreq = 0;
 int greenFreq = 0;
 int blueFreq = 0;
 
-int red[] = {172, 280, 198};
-int orange[] = {142, 224, 183};
-int yellow[] = {130, 162, 171};
-int green[] = {165, 177, 171};
-int blue[] = {164, 171, 117};
-int purple[] = {198, 224, 144};
-int pink[] = {165, 238, 151};
-int brown[] = {190, 247, 201};
 
-int tolerance = 15;
+//memset(color,0,sizeof(color));
+
+
+typedef struct RGB{
+  String name;
+  int r;
+  int g;
+  int b;  
+};
+
+/*
+struct Smarties {
+  RGB red = {172, 280, 198};
+  RGB orange = {142, 224, 183};
+  RGB yellow = {130, 162, 171};
+  RGB green = {165, 177, 171};
+  RGB blue = {164, 171, 117};
+  RGB purple = {198, 224, 144};
+  RGB pink = {165, 238, 151};
+  RGB brown = {190, 247, 201};
+};*/
+//RGB* color = new RGB[50];
+
+RGB color[] = {
+  {"red", 172, 280, 198}, 
+  {"orange", 142, 224, 183},
+  {"yellow", 130, 162, 171},
+  {"green", 165, 177, 171},
+  {"blue", 164, 171, 117},
+  {"purple", 198, 224, 144},
+  {"pink", 165, 238, 151},
+  {"brown", 190, 247, 201},
+  {"", 0, 0, 0},
+  {"", 0, 0, 0},
+  {"", 0, 0, 0},
+  {"", 0, 0, 0},
+  {"", 0, 0, 0},
+  {"", 0, 0, 0},
+};
+
+
+
+int tolerance = 10;
 
 void setup() {
   // Setting the outputs
@@ -41,6 +75,19 @@ void setup() {
   
    // Begins serial communication 
   Serial.begin(9600);
+
+
+
+  /*
+  color['red'] = {172, 280, 198};
+  color["orange"] = {142, 224, 183};
+  color["yellow"] = {130, 162, 171};
+  color["green"] = {165, 177, 171};
+  color["blue"] = {164, 171, 117};
+  color["purple"] = {198, 224, 144};
+  color['pink'] = {165, 238, 151};
+  color['brown'] = {190, 247, 201};
+  */
 }
 int get_freq(String color){
 
@@ -57,6 +104,7 @@ int get_freq(String color){
       redFreq += redReading[i];
     }
     redFreq = (redFreq/10);
+    //redFreq = map(redFreq, 178,270,255,0);
     return redFreq;
     
   }
@@ -73,6 +121,8 @@ int get_freq(String color){
       greenFreq += greenReading[i];
     }
     greenFreq = (greenFreq/10);
+    //greenFreq = map(greenFreq, 183,310,255,0);
+
     return greenFreq;
     //delay(100);
   }
@@ -89,78 +139,79 @@ int get_freq(String color){
       blueFreq += blueReading[i];
     }
     blueFreq = (blueFreq/10);
+    //blueFreq = map(blueFreq, 120,241,255,0);
     return blueFreq;
     //delay(100);
   }
  
 }
+void add_color(String readStr, int red, int green, int blue){
+  int index = sizeof(color)/sizeof(RGB);
+  //RGB(color[index], {readStr, red, green, blue});
 
+  //RGB* color = new RGB[index];
+  //color[index] = {readStr, red, green, blue};
+  color[index] = {readStr, red, green, blue};
+  Serial.println("Added: " + color[index].name + "\nTo: " + String(red) + " " + String(green) + " " + String(blue));
+  return;
+}
+
+void set_color(String readStr, int red, int green, int blue, int index){
+  color[index] = {readStr, red, green, blue};
+  Serial.println("Set: " + color[index].name + "\nTo: " + String(red) + " " + String(green) + " " + String(blue));
+  return;
+  
+}
 String get_color(){
-  if((red[0]<(tolerance+redFreq) && red[0]>(redFreq-tolerance)) &&
-  (red[1]<(tolerance+greenFreq) && red[1]>(greenFreq-tolerance)) &&
-  (red[2]<(tolerance+blueFreq) && red[2]>(blueFreq-tolerance))){
-    Serial.println("red");
-    return "red";
-    
-      
+  int i = 0;
+  for(i=0; i<sizeof(color)/sizeof(RGB); i++){
+    if((color[i].r<(tolerance+redFreq) && color[i].r>(redFreq-tolerance)) &&
+    (color[i].g<(tolerance+greenFreq) && color[i].g>(greenFreq-tolerance)) &&
+    (color[i].b<(tolerance+blueFreq) && color[i].b>(blueFreq-tolerance))){
+      //Serial.println(color[i].name);
+      return color[i].name;     
+    }
   }
-  else if((orange[0]<(tolerance+redFreq) && orange[0]>(redFreq-tolerance)) &&
-  (orange[1]<(tolerance+greenFreq) && orange[1]>(greenFreq-tolerance)) &&
-  (orange[2]<(tolerance+blueFreq) && orange[2]>(blueFreq-tolerance))){
-    Serial.println("orange");
-    return "orange";
-  }
-  
-  else if((yellow[0]<(tolerance+redFreq) && yellow[0]>(redFreq-tolerance)) &&
-  (yellow[1]<(tolerance+greenFreq) && yellow[1]>(greenFreq-tolerance)) &&
-  (yellow[2]<(tolerance+blueFreq) && yellow[2]>(blueFreq-tolerance))){
-    Serial.println("yellow");
-    return "yellow";
-  
-  }
-  else if((green[0]<(tolerance+redFreq) && green[0]>(redFreq-tolerance)) &&
-  (green[1]<(tolerance+greenFreq) && green[1]>(greenFreq-tolerance)) &&
-  (green[2]<(tolerance+blueFreq) && green[2]>(blueFreq-tolerance))){
-    Serial.println("green");
-    return "green";
-  }
-  else if((blue[0]<(tolerance+redFreq) && blue[0]>(redFreq-tolerance)) &&
-  (blue[1]<(tolerance+greenFreq) && blue[1]>(greenFreq-tolerance)) &&
-  (blue[2]<(tolerance+blueFreq) && blue[2]>(blueFreq-tolerance))){
-    Serial.println("blue");
-    return "blue";
-  }
-  else if((purple[0]<(tolerance+redFreq) && purple[0]>(redFreq-tolerance)) &&
-  (purple[1]<(tolerance+greenFreq) && purple[1]>(greenFreq-tolerance)) &&
-  (purple[2]<(tolerance+blueFreq) && purple[2]>(blueFreq-tolerance))){
-    Serial.println("purple");
-    return "purple";
-  }
-  else if((pink[0]<(tolerance+redFreq) && pink[0]>(redFreq-tolerance)) &&
-  (pink[1]<(tolerance+greenFreq) && pink[1]>(greenFreq-tolerance)) &&
-  (pink[2]<(tolerance+blueFreq) && pink[2]>(blueFreq-tolerance))){
-    Serial.println("pink");
-    return "pink";
-  
-  }
-  else if((brown[0]<(tolerance+redFreq) && brown[0]>(redFreq-tolerance)) &&
-  (brown[1]<(tolerance+greenFreq) && brown[1]>(greenFreq-tolerance)) &&
-  (brown[2]<(tolerance+blueFreq) && brown[2]>(blueFreq-tolerance))){
-    Serial.println("brown");
-    return "brown";
-  }
-  else{
-    Serial.println("not recognized");
-    return "not recognized";
-  }
+  return "not found";
 }
 
 
 void loop() {
-  get_freq("R");
-  get_freq("G");
-  get_freq("B");
-  get_color();
+
+  redFreq = get_freq("R");
+  greenFreq = get_freq("G");
+  blueFreq = get_freq("B");
+  Serial.println(get_color());
   Serial.println("R="+String(redFreq)+" G="+String(greenFreq)+" B="+String(blueFreq));
-  delay(100);
+  while(Serial.available() > 0 ){
+    String str = Serial.readString();
+    int i = 0;
+    bool found = false;
+    //add_color(str, redFreq, greenFreq, blueFreq);
+
+    for(i=0; i<sizeof(color)/sizeof(RGB); i++){
+      if(str.substring(0) == (color[i].name + "")){
+        //Serial.println(str);
+        //Serial.println("identified");
+        set_color(str, redFreq, greenFreq, blueFreq, i);
+        found = true;
+        break;
+      }
+      else{
+        //set_color(str, redFreq, greenFreq, blueFreq);
+        //Serial.println("unknown");
+      }
+    }
+    if(found = false){
+      add_color(str, redFreq, greenFreq, blueFreq);
+    }
+    
+
+
+
+  }
+  
+  delay(1000);
+  
+
 }
