@@ -1,6 +1,5 @@
 /*********
-  Rui Santos
-  Complete project details at https://randomnerdtutorials.com  
+  Benjamin Flatz
 *********/
 
 // TCS230 or TCS3200 pins wiring to Arduino
