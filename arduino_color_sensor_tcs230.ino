@@ -8,6 +8,7 @@
 #define S2 5
 #define S3 6
 #define sensorOut 7
+#define sw 8
 
 // Stores Freq read by the photodiodes
 int redFreq = 0;
@@ -17,13 +18,21 @@ int blueFreq = 0;
 
 //memset(color,0,sizeof(color));
 
+struct NRGB{
+  String name[50];
+  int r[50];
+  int g[50];
+  int b[50];  
+};
 
-typedef struct RGB{
-  String name;
+NRGB color;
+/*
+typedef struct IRGB{
+  int id;
   int r;
   int g;
   int b;  
-};
+};*/
 
 /*
 struct Smarties {
@@ -36,8 +45,9 @@ struct Smarties {
   RGB pink = {165, 238, 151};
   RGB brown = {190, 247, 201};
 };*/
-//RGB* color = new RGB[50];
+//RGB color[50];
 
+/*
 RGB color[] = {
   {"red", 172, 280, 198}, 
   {"orange", 142, 224, 183},
@@ -47,13 +57,20 @@ RGB color[] = {
   {"purple", 198, 224, 144},
   {"pink", 165, 238, 151},
   {"brown", 190, 247, 201},
-  {"", 0, 0, 0},
-  {"", 0, 0, 0},
-  {"", 0, 0, 0},
-  {"", 0, 0, 0},
-  {"", 0, 0, 0},
-  {"", 0, 0, 0},
-};
+
+};*/
+/*
+IRGB color[10] = {
+  {0, 172, 280, 198}, 
+  {1, 142, 224, 183},
+  {2, 130, 162, 171},
+  {3, 165, 177, 171},
+  {4, 164, 171, 117},
+  {5, 198, 224, 144},
+  {6, 165, 238, 151},
+  {7, 190, 247, 201},
+
+};*/
 
 
 
@@ -65,6 +82,7 @@ void setup() {
   pinMode(S1, OUTPUT);
   pinMode(S2, OUTPUT);
   pinMode(S3, OUTPUT);
+  pinMode(sw, INPUT_PULLUP);
   
   // Setting the sensorOut as an input
   pinMode(sensorOut, INPUT);
@@ -146,30 +164,48 @@ int get_freq(String color){
  
 }
 void add_color(String readStr, int red, int green, int blue){
-  int index = sizeof(color)/sizeof(RGB);
+  int index = sizeof(color.name)/sizeof(NRGB);
   //RGB(color[index], {readStr, red, green, blue});
+  //Serial.println("Added: " + readStr + "\nTo: " + String(color.r[index]) + " " + String(color.g[index]) + " " + String(color.b[index]));
 
-  //RGB* color = new RGB[index];
+
+  color.name[index] = readStr;
+  color.r[index] = red;
+  color.g[index] = green;
+  color.b[index] = blue;
   //color[index] = {readStr, red, green, blue};
-  color[index] = {readStr, red, green, blue};
-  Serial.println("Added: " + color[index].name + "\nTo: " + String(red) + " " + String(green) + " " + String(blue));
+  //RGB* color = new RGB[index];
+  //color[index+1] = {readStr, red, green, blue};
+  //color[8] = {readStr, red, green, blue};
+  
+  Serial.println("");
+  Serial.println("Added: " + readStr + "\nTo: " + String(color.r[index]) + " " + String(color.g[index]) + " " + String(color.b[index]));
+  Serial.println("");
+
   return;
 }
 
 void set_color(String readStr, int red, int green, int blue, int index){
-  color[index] = {readStr, red, green, blue};
-  Serial.println("Set: " + color[index].name + "\nTo: " + String(red) + " " + String(green) + " " + String(blue));
+  color.name[index] = readStr;
+  color.r[index] = red;
+  color.g[index] = green;
+  color.b[index] = blue;
+  
+  Serial.println("");
+  Serial.println("Set: " + String(color.name[index]) + "\nTo: " + String(red) + " " + String(green) + " " + String(blue));
+  Serial.println("");
+
   return;
   
 }
 String get_color(){
   int i = 0;
-  for(i=0; i<sizeof(color)/sizeof(RGB); i++){
-    if((color[i].r<(tolerance+redFreq) && color[i].r>(redFreq-tolerance)) &&
-    (color[i].g<(tolerance+greenFreq) && color[i].g>(greenFreq-tolerance)) &&
-    (color[i].b<(tolerance+blueFreq) && color[i].b>(blueFreq-tolerance))){
+  for(i=0; i<sizeof(color)/sizeof(NRGB); i++){
+    if((color.r[i]<(tolerance+redFreq) && color.r[i]>(redFreq-tolerance)) &&
+    (color.g[i]<(tolerance+greenFreq) && color.g[i]>(greenFreq-tolerance)) &&
+    (color.b[i]<(tolerance+blueFreq) && color.b[i]>(blueFreq-tolerance))){
       //Serial.println(color[i].name);
-      return color[i].name;     
+      return color.name[i];     
     }
   }
   return "not found";
@@ -178,19 +214,22 @@ String get_color(){
 
 void loop() {
 
+  
   redFreq = get_freq("R");
   greenFreq = get_freq("G");
   blueFreq = get_freq("B");
   Serial.println(get_color());
   Serial.println("R="+String(redFreq)+" G="+String(greenFreq)+" B="+String(blueFreq));
-  while(Serial.available() > 0 ){
+  if (Serial.available() > 0 ){
     String str = Serial.readString();
     int i = 0;
     bool found = false;
-    //add_color(str, redFreq, greenFreq, blueFreq);
-
-    for(i=0; i<sizeof(color)/sizeof(RGB); i++){
-      if(str.substring(0) == (color[i].name + "")){
+  
+    for(i=0; i<sizeof(color.name)/sizeof(NRGB); i++){
+      //Serial.println(color.name[i]);
+      delay(1);
+      
+      if(str == color.name[i]){
         //Serial.println(str);
         //Serial.println("identified");
         set_color(str, redFreq, greenFreq, blueFreq, i);
@@ -202,15 +241,14 @@ void loop() {
         //Serial.println("unknown");
       }
     }
-    if(found = false){
+    if(found == false){
       add_color(str, redFreq, greenFreq, blueFreq);
     }
-    
-
-
-
+    str = "";
   }
   
+  //Serial.println(String(sizeof(color.name)/sizeof(NRGB)));
+
   delay(1000);
   
 
