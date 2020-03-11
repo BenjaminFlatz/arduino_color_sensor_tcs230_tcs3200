@@ -11,13 +11,13 @@ Hardware:
   Breadboard or PCB
   
 Scematic:
-  1.S0---3
-  2.S1---4
-  3.S2---5
-  4.S3---6
-  5.sensorOut---7
-  6.VCC---5V
-  7.GND---GND
+  S0---3
+  S1---4
+  S2---5
+  S3---6
+  sensorOut---7
+  VCC---5V
+  GND---GND
   
 Functions:
   get_freq()
