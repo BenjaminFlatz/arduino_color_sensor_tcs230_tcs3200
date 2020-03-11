@@ -9,6 +9,7 @@
 #define S3 6
 #define sensorOut 7
 
+#define btnAdd 12
 // Stores Freq read by the photodiodes
 int redFreq = 0;
 int greenFreq = 0;
@@ -90,6 +91,8 @@ void setup() {
   pinMode(sw[1], INPUT_PULLUP);
   pinMode(sw[2], INPUT_PULLUP);
   pinMode(sw[3], INPUT_PULLUP);
+
+  pinMode(btnAdd, INPUT_PULLUP);
   
   // Setting the sensorOut as an input
   pinMode(sensorOut, INPUT);
@@ -114,6 +117,9 @@ void setup() {
   color['brown'] = {190, 247, 201};
   */
 }
+
+
+
 int get_freq(String color){
 
   if(color == "R"){
@@ -170,7 +176,24 @@ int get_freq(String color){
   }
  
 }
-void add_color(String readStr, int red, int green, int blue){
+
+int get_pos(){
+  int j = 0;
+  int pos = 0;
+  int mlt = 1;
+  
+  for(j=0; j<sizeof(sw)/sizeof(int); j++){
+    
+    if(digitalRead(sw[j]) == 0){
+      pos = pos+mlt;
+      //Serial.println(pos);
+    }
+    mlt = mlt*2;
+  }
+  return pos;
+}
+
+void add_color(String readStr, int red, int green, int blue, int pos){
   int i = 0;
   int index;
   for(i=0; i<sizeof(color.name)/sizeof(String); i++){
@@ -178,18 +201,7 @@ void add_color(String readStr, int red, int green, int blue){
       index = i+1;
     }
   }
-  int j = 0;
-  int pos = 0;
-  int mlt = 1;
   
-  for(j=0; j<sizeof(sw)/sizeof(int); j++){
-    
-    if(digitalRead(sw[j]) == 1){
-      pos = pos+mlt;
-      //Serial.println(pos);
-    }
-    mlt = mlt*2;
-  }
   //index = sizeof(color.name)/sizeof(NRGB);
   //RGB(color[index], {readStr, red, green, blue});
   //Serial.println("Added: " + readStr + "\nTo: " + String(color.r[index]) + " " + String(color.g[index]) + " " + String(color.b[index]));
@@ -212,21 +224,9 @@ void add_color(String readStr, int red, int green, int blue){
   return;
 }
 
-void set_color(String readStr, int red, int green, int blue, int index){
-  
+void set_color(String readStr, int red, int green, int blue, int index, int pos){
   
   int j = 0;
-  int pos = 0;
-  int mlt = 1;
-  
-  for(j=0; j<sizeof(sw)/sizeof(int); j++){
-    
-    if(digitalRead(sw[j]) == 1){
-      pos = pos+mlt;
-      //Serial.println(pos);
-    }
-    mlt = mlt*2;
-  }
   
   color.pos[index] = pos;
   color.name[index] = readStr;
@@ -249,7 +249,7 @@ String get_color(){
     (color.g[i]<(tolerance+greenFreq) && color.g[i]>(greenFreq-tolerance)) &&
     (color.b[i]<(tolerance+blueFreq) && color.b[i]>(blueFreq-tolerance))){
       //Serial.println(color[i].name);
-      return color.name[i];     
+      return "Name=" + color.name[i] + " Pos=" + String(color.pos[i]);     
     }
   }
   return "not found";
@@ -262,8 +262,38 @@ void loop() {
   redFreq = get_freq("R");
   greenFreq = get_freq("G");
   blueFreq = get_freq("B");
+  int pos = get_pos();
+
+  
   Serial.println(get_color());
   Serial.println("R="+String(redFreq)+" G="+String(greenFreq)+" B="+String(blueFreq));
+  
+  
+  if(digitalRead(btnAdd) == 0){
+    int i = 0;
+    bool found = false;
+    for(i=0; i<sizeof(color.pos)/sizeof(int); i++){
+      //Serial.println(color.name[i]);
+      delay(1);
+      
+      if(color.pos[i] == pos){
+        //Serial.println(str);
+        //Serial.println("identified");
+        set_color("", redFreq, greenFreq, blueFreq, i, pos);
+        found = true;
+        break;
+      }
+      else{
+        //set_color(str, redFreq, greenFreq, blueFreq);
+        //Serial.println("unknown");
+      }
+    }
+    if(found == false){
+      add_color("", redFreq, greenFreq, blueFreq, pos);
+    }
+  }
+  
+  
   if (Serial.available() > 0 ){
     String str = Serial.readString();
     int i = 0;
@@ -276,7 +306,7 @@ void loop() {
       if(str == color.name[i]){
         //Serial.println(str);
         //Serial.println("identified");
-        set_color(str, redFreq, greenFreq, blueFreq, i);
+        set_color(str, redFreq, greenFreq, blueFreq, i, pos);
         found = true;
         break;
       }
@@ -286,7 +316,7 @@ void loop() {
       }
     }
     if(found == false){
-      add_color(str, redFreq, greenFreq, blueFreq);
+      add_color(str, redFreq, greenFreq, blueFreq, pos);
     }
     str = "";
   }
