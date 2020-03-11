@@ -8,24 +8,27 @@
 #define S2 5
 #define S3 6
 #define sensorOut 7
-#define sw 8
 
 // Stores Freq read by the photodiodes
 int redFreq = 0;
 int greenFreq = 0;
 int blueFreq = 0;
 
-
+int sw[] = {8, 9, 10, 11};
 //memset(color,0,sizeof(color));
 
 struct NRGB{
+  int pos[50] = {0,1,2,3,4,5,6,7};
   String name[50] = {"red","orange","yellow","green","blue","purple","pink","brown"};
-  int r[50] = {172,142,130,165,164,198,165,190};
-  int g[50] = {280,224,162,177,171,224,238,247};
-  int b[50] = {198,183,171,171,117,144,151,201};  
+  int r[50] = {180,142,130,165,164,198,165,190};
+  int g[50] = {287,224,162,177,171,224,238,247};
+  int b[50] = {202,183,171,171,117,144,151,201};  
 };
 
 NRGB color;
+
+
+
 /*
 typedef struct IRGB{
   int id;
@@ -74,7 +77,7 @@ IRGB color[10] = {
 
 
 
-int tolerance = 10;
+int tolerance = 7;
 
 void setup() {
   // Setting the outputs
@@ -82,7 +85,11 @@ void setup() {
   pinMode(S1, OUTPUT);
   pinMode(S2, OUTPUT);
   pinMode(S3, OUTPUT);
-  pinMode(sw, INPUT_PULLUP);
+  
+  pinMode(sw1, INPUT_PULLUP);
+  pinMode(sw2, INPUT_PULLUP);
+  pinMode(sw3, INPUT_PULLUP);
+  pinMode(sw4, INPUT_PULLUP);
   
   // Setting the sensorOut as an input
   pinMode(sensorOut, INPUT);
@@ -171,11 +178,23 @@ void add_color(String readStr, int red, int green, int blue){
       index = i+1;
     }
   }
+  int j = 0;
+  int pos = 0;
+  int mlt = 1;
+  
+  for(j=0; j<sizeof(sw)/sizeof(int); j++){
+    
+    if(digitalRead(sw[j]) == 1){
+      pos = pos+mlt;
+      //Serial.println(pos);
+    }
+    mlt = mlt*2;
+  }
   //index = sizeof(color.name)/sizeof(NRGB);
   //RGB(color[index], {readStr, red, green, blue});
   //Serial.println("Added: " + readStr + "\nTo: " + String(color.r[index]) + " " + String(color.g[index]) + " " + String(color.b[index]));
 
-
+  color.pos[index] = pos;
   color.name[index] = readStr;
   color.r[index] = red;
   color.g[index] = green;
@@ -186,6 +205,7 @@ void add_color(String readStr, int red, int green, int blue){
   //color[8] = {readStr, red, green, blue};
   
   Serial.println("");
+  Serial.println(color.pos[index]);
   Serial.println("Added: " + readStr + "\nTo: " + String(color.r[index]) + " " + String(color.g[index]) + " " + String(color.b[index]));
   Serial.println("");
 
@@ -193,12 +213,29 @@ void add_color(String readStr, int red, int green, int blue){
 }
 
 void set_color(String readStr, int red, int green, int blue, int index){
+  
+  
+  int j = 0;
+  int pos = 0;
+  int mlt = 1;
+  
+  for(j=0; j<sizeof(sw)/sizeof(int); j++){
+    
+    if(digitalRead(sw[j]) == 1){
+      pos = pos+mlt;
+      //Serial.println(pos);
+    }
+    mlt = mlt*2;
+  }
+  
+  color.pos[index] = pos;
   color.name[index] = readStr;
   color.r[index] = red;
   color.g[index] = green;
   color.b[index] = blue;
-  
+
   Serial.println("");
+  Serial.println(color.pos[index]);
   Serial.println("Set: " + String(color.name[index]) + "\nTo: " + String(red) + " " + String(green) + " " + String(blue));
   Serial.println("");
 
