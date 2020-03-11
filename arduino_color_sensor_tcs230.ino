@@ -86,10 +86,10 @@ void setup() {
   pinMode(S2, OUTPUT);
   pinMode(S3, OUTPUT);
   
-  pinMode(sw1, INPUT_PULLUP);
-  pinMode(sw2, INPUT_PULLUP);
-  pinMode(sw3, INPUT_PULLUP);
-  pinMode(sw4, INPUT_PULLUP);
+  pinMode(sw[0], INPUT_PULLUP);
+  pinMode(sw[1], INPUT_PULLUP);
+  pinMode(sw[2], INPUT_PULLUP);
+  pinMode(sw[3], INPUT_PULLUP);
   
   // Setting the sensorOut as an input
   pinMode(sensorOut, INPUT);
