@@ -19,10 +19,10 @@ int blueFreq = 0;
 //memset(color,0,sizeof(color));
 
 struct NRGB{
-  String name[50];
-  int r[50];
-  int g[50];
-  int b[50];  
+  String name[50] = {"red","orange","yellow","green","blue","purple","pink","brown"};
+  int r[50] = {172,142,130,165,164,198,165,190};
+  int g[50] = {280,224,162,177,171,224,238,247};
+  int b[50] = {198,183,171,171,117,144,151,201};  
 };
 
 NRGB color;
@@ -164,7 +164,14 @@ int get_freq(String color){
  
 }
 void add_color(String readStr, int red, int green, int blue){
-  int index = sizeof(color.name)/sizeof(NRGB);
+  int i = 0;
+  int index;
+  for(i=0; i<sizeof(color.name)/sizeof(String); i++){
+    if(color.name[i] != ""){
+      index = i+1;
+    }
+  }
+  //index = sizeof(color.name)/sizeof(NRGB);
   //RGB(color[index], {readStr, red, green, blue});
   //Serial.println("Added: " + readStr + "\nTo: " + String(color.r[index]) + " " + String(color.g[index]) + " " + String(color.b[index]));
 
@@ -200,7 +207,7 @@ void set_color(String readStr, int red, int green, int blue, int index){
 }
 String get_color(){
   int i = 0;
-  for(i=0; i<sizeof(color)/sizeof(NRGB); i++){
+  for(i=0; i<sizeof(color.name)/sizeof(String); i++){
     if((color.r[i]<(tolerance+redFreq) && color.r[i]>(redFreq-tolerance)) &&
     (color.g[i]<(tolerance+greenFreq) && color.g[i]>(greenFreq-tolerance)) &&
     (color.b[i]<(tolerance+blueFreq) && color.b[i]>(blueFreq-tolerance))){
@@ -225,7 +232,7 @@ void loop() {
     int i = 0;
     bool found = false;
   
-    for(i=0; i<sizeof(color.name)/sizeof(NRGB); i++){
+    for(i=0; i<sizeof(color.name)/sizeof(String); i++){
       //Serial.println(color.name[i]);
       delay(1);
       
