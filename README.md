@@ -4,12 +4,14 @@
 The rgb values and the color string and position gets printed every second.
 If you send a string over serial to the Arduino nano you add/set the current color value, the string as name and the binary switch states as position. If you want to add without a name you can use the btnAdd instead.
 
+
 Hardware:
 1.  TCS3200 or TCS230 sensor.
 2.  Arduino Nano
 3.  Wires
 4.  Breadboard or PCB
-  
+
+
 Schematic:
 - TCS3200
   1.  S0---3
@@ -19,6 +21,7 @@ Schematic:
   5.  sensorOut---7
   6.  VCC---5V
   7.  GND---GND
+
 
 - Switches
   1.  sw[0]---8
