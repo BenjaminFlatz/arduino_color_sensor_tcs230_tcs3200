@@ -10,7 +10,7 @@ Hardware:
 3.  Wires
 4.  Breadboard or PCB
   
-Scematic:
+Schematic:
 1.  S0---3
 2.  S1---4
 3.  S2---5
@@ -29,4 +29,5 @@ Functions:
 2.  add_color()
 3.  set_color()
 4.  get_color()
+5.	get_pos()
   
