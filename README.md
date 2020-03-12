@@ -1,4 +1,4 @@
-# arduino_color_sensor_tcs230
+# arduino_color_sensor_tcs230_tcs3200
 
 
 The rgb values and the color string and position gets printed every second.
