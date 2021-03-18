@@ -1,7 +1,7 @@
 # arduino_color_sensor_tcs230_tcs3200
 
 
-The rgb values and the color string and position gets printed every second.
+The rgb values, the color string and position gets printed every second.
 If you send a string over serial to the Arduino nano you add/set the current color value, the string as name and the binary switch states as position. If you want to add without a name you can use the btnAdd instead.
 
 
